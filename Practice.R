@@ -1,4 +1,4 @@
-
+library(tidyverse)
 
 # Define the parameters for the gamma distribution
 shape_params <- c(19.2, 9.6, 192)
