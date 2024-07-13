@@ -12,7 +12,7 @@ showtext_auto()
 showtext_opts(dpi = 300)
 
 
-df <- read_csv("MLS Results.csv")
+df <- read_csv("MLS Predictions/MLS Results.csv")
 
 df <- df %>%
   pivot_longer(
@@ -105,7 +105,7 @@ create_plot <- function(data, avg_goals, logo_path, show_title_y = FALSE, show_t
     geom_col(aes(x = Goals, y = ifelse(Type == "Expected", Prob, NA), fill = "Expected"), width = 0.65, alpha = 0.35) +
     scale_fill_manual(values = colors, 
                       breaks = c("Observed", "Expected"), 
-                      labels = c("Observed",  paste("Expected (λ =", round(avg_goal, 2), ")"))) +
+                      labels = c("Observed",  paste("Poisson (λ =", round(avg_goal, 2), ")"))) +
     scale_y_continuous(labels = scales::percent_format(), expand = c(0, 0), limits = c(0, 0.5), breaks = seq(0, 1, by = 0.1)) +
     labs(title = team) +
     coord_cartesian(clip = 'off') +
@@ -139,36 +139,38 @@ create_plot <- function(data, avg_goals, logo_path, show_title_y = FALSE, show_t
 
 # Load the logos as a named list (update paths accordingly)
 logo_paths <- c(
-  "Atlanta Utd" = "MLS logo/Atlanta Utd.png",
-  "Austin" = "MLS logo/Austin.png",
-  "CF Montréal" = "MLS logo/CF Montréal.png",
-  "Charlotte" = "MLS logo/Charlotte.png",
-  "Crew" = "MLS logo/Crew.png",
-  "D.C. United" = "MLS logo/D.C. United.png",
-  "Dynamo FC" = "MLS logo/Dynamo FC.png",
-  "FC Cincinnati" = "MLS logo/FC Cincinnati.png",
-  "FC Dallas" = "MLS logo/FC Dallas.png",
-  "Fire" = "MLS logo/Fire.png",
-  "Inter Miami" = "MLS logo/Inter Miami.png",
-  "LA Galaxy" = "MLS logo/LA Galaxy.png",
-  "LAFC" = "MLS logo/LAFC.png",
-  "Minnesota Utd" = "MLS logo/Minnesota Utd.png",
-  "Nashville" = "MLS logo/Nashville.png",
-  "NE Revolution" = "MLS logo/NE Revolution.png",
-  "NY Red Bulls" = "MLS logo/NY Red Bulls.png",
-  "NYCFC" = "MLS logo/NYCFC.png",
-  "Orlando City" = "MLS logo/Orlando City.png",
-  "Philadelphia" = "MLS logo/Philadelphia.png",
-  "Portland Timbers" = "MLS logo/Portland Timbers.png",
-  "Rapids" = "MLS logo/Rapids.png",
-  "RSL" = "MLS logo/RSL.png",
-  "Seattle" = "MLS logo/Seattle.png",
-  "SJ Earthquakes" = "MLS logo/SJ Earthquakes.png",
-  "Sporting KC" = "MLS logo/Sporting KC.png",
-  "St. Louis" = "MLS logo/St. Louis.png",
-  "Toronto FC" = "MLS logo/Toronto FC.png",
-  "Vancouver W'caps" = "MLS logo/Vancouver W'caps.png"
+  "Atlanta Utd" = "MLS Predictions/MLS Team Logos/Atlanta Utd.png",
+  "Austin" = "MLS Predictions/MLS Team Logos/Austin.png",
+  "CF Montréal" = "MLS Predictions/MLS Team Logos/CF Montréal.png",
+  "Charlotte" = "MLS Predictions/MLS Team Logos/Charlotte.png",
+  "Crew" = "MLS Predictions/MLS Team Logos/Crew.png",
+  "D.C. United" = "MLS Predictions/MLS Team Logos/D.C. United.png",
+  "Dynamo FC" = "MLS Predictions/MLS Team Logos/Dynamo FC.png",
+  "FC Cincinnati" = "MLS Predictions/MLS Team Logos/FC Cincinnati.png",
+  "FC Dallas" = "MLS Predictions/MLS Team Logos/FC Dallas.png",
+  "Fire" = "MLS Predictions/MLS Team Logos/Fire.png",
+  "Inter Miami" = "MLS Predictions/MLS Team Logos/Inter Miami.png",
+  "LA Galaxy" = "MLS Predictions/MLS Team Logos/LA Galaxy.png",
+  "LAFC" = "MLS Predictions/MLS Team Logos/LAFC.png",
+  "Minnesota Utd" = "MLS Predictions/MLS Team Logos/Minnesota Utd.png",
+  "Nashville" = "MLS Predictions/MLS Team Logos/Nashville.png",
+  "NE Revolution" = "MLS Predictions/MLS Team Logos/NE Revolution.png",
+  "NY Red Bulls" = "MLS Predictions/MLS Team Logos/NY Red Bulls.png",
+  "NYCFC" = "MLS Predictions/MLS Team Logos/NYCFC.png",
+  "Orlando City" = "MLS Predictions/MLS Team Logos/Orlando City.png",
+  "Philadelphia" = "MLS Predictions/MLS Team Logos/Philadelphia.png",
+  "Portland Timbers" = "MLS Predictions/MLS Team Logos/Portland Timbers.png",
+  "Rapids" = "MLS Predictions/MLS Team Logos/Rapids.png",
+  "RSL" = "MLS Predictions/MLS Team Logos/RSL.png",
+  "Seattle" = "MLS Predictions/MLS Team Logos/Seattle.png",
+  "SJ Earthquakes" = "MLS Predictions/MLS Team Logos/SJ Earthquakes.png",
+  "Sporting KC" = "MLS Predictions/MLS Team Logos/Sporting KC.png",
+  "St. Louis" = "MLS Predictions/MLS Team Logos/St. Louis.png",
+  "Toronto FC" = "MLS Predictions/MLS Team Logos/Toronto FC.png",
+  "Vancouver W'caps" = "MLS Predictions/MLS Team Logos/Vancouver W'caps.png"
 )
+
+df_split <- split(df_cleaned, df_cleaned$Team)
 
 plots <- lapply(seq_along(df_split), function(i) {
   team <- names(df_split)[i]
@@ -181,36 +183,4 @@ plots <- lapply(seq_along(df_split), function(i) {
 
 combined_plot <- wrap_plots(plots)
 print(combined_plot)
-ggsave("MLS Goals and Expected Goals.png", combined_plot, bg = "white", width = 8, height = 8)
-
-
-
-
-
-# Simulate some soccer match data (goals scored in 10 matches)
-goals_scored <- c(2, 1, 3, 0, 2, 1, 4, 2, 3, 1)
-
-# Prior parameters for Gamma distribution (shape = alpha, rate = beta)
-alpha_prior <- 2
-beta_prior <- 1
-
-# Posterior parameters
-alpha_posterior <- alpha_prior + sum(goals_scored)
-beta_posterior <- beta_prior + length(goals_scored)
-
-# Gamma prior and posterior
-lambda <- seq(0, 10, by = 0.01)
-prior <- dgamma(lambda, shape = alpha_prior, rate = beta_prior)
-posterior <- dgamma(lambda, shape = alpha_posterior, rate = beta_posterior)
-
-# Plotting prior and posterior distributions
-df <- data.frame(lambda = rep(lambda, 2), 
-                 density = c(prior, posterior), 
-                 type = rep(c("Prior", "Posterior"), each = length(lambda)))
-
-ggplot(df, aes(x = lambda, y = density, color = type)) +
-  geom_line() +
-  labs(title = "Gamma Prior and Posterior Distributions",
-       x = expression(lambda),
-       y = "Density") +
-  theme_minimal()
+ggsave("MLS Predictions/Output/MLS Goals and Expected Goals.png", combined_plot, bg = "white", width = 8, height = 8)
