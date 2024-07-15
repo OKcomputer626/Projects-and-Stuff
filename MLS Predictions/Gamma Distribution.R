@@ -33,13 +33,13 @@ ggplot(density_data, aes(x = x, y = density, color = as_factor(Parameters))) +
   scale_x_continuous(breaks = seq(0, 4, 0.5)) +
   scale_y_continuous(breaks = seq(0, 3, 0.5)) +
   theme(
-    text = element_text(family = "Roboto"),
+    text = element_text(family = "Montserrat"),
     plot.title = element_markdown(hjust = 0.5),
     legend.title = element_blank(),
     axis.text = element_text(color = "black"),
     legend.position = "inside",
     legend.position.inside = c(0.8, 0.8),
-    legend.text = element_text(size = 6.5),
+    legend.text = element_text(size = 6.5, family = "Roboto"),
     legend.key.height = unit(0.1, "cm"),
     legend.key.width = unit(0.6, "cm"),
     legend.key.spacing.y = unit(0.2, "cm"),

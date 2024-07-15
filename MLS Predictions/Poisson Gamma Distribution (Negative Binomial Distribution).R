@@ -50,7 +50,7 @@ density_data %>%
        y = "Probability") +
   theme_minimal() +
   theme(
-    text = element_text(family = "Roboto"),
+    text = element_text(family = "Montserrat"),
     plot.title = element_text(hjust = 0.5),
     axis.text = element_text(color = "black"),
     panel.grid.major = element_line(linetype = "dashed", linewidth = 0.3),
@@ -63,7 +63,7 @@ density_data %>%
     legend.key.height = unit(0.1, "cm"),
     legend.key.width = unit(0.6, "cm"),
     legend.key.spacing.y = unit(0.2, "cm"),
-    legend.text = element_text(size = 6.5)
+    legend.text = element_text(size = 6.5, family = "Roboto")
   ) 
 
 ggsave("MLS Predictions/Output/Poisson Gamma Distribution.png", width = 7, height = 4, bg = "white")
