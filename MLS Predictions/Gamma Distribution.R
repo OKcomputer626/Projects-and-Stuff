@@ -34,9 +34,10 @@ ggplot(density_data, aes(x = x, y = density, color = as_factor(Parameters))) +
   scale_y_continuous(breaks = seq(0, 3, 0.5)) +
   theme(
     text = element_text(family = "Montserrat"),
-    plot.title = element_markdown(hjust = 0.5),
+    plot.title = element_markdown(hjust = 0.5, family = "Roboto"),
     legend.title = element_blank(),
     axis.text = element_text(color = "black"),
+    axis.title = element_text(family = "Roboto"),
     legend.position = "inside",
     legend.position.inside = c(0.8, 0.8),
     legend.text = element_text(size = 6.5, family = "Roboto"),
