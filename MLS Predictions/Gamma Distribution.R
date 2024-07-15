@@ -38,8 +38,11 @@ ggplot(density_data, aes(x = x, y = density, color = as_factor(Parameters))) +
     legend.title = element_blank(),
     axis.text = element_text(color = "black"),
     legend.position = "inside",
-    legend.position.inside = c(0.7, 0.7),
-    legend.key.size = unit(0.5, "cm")
+    legend.position.inside = c(0.8, 0.8),
+    legend.text = element_text(size = 6.5),
+    legend.key.height = unit(0.1, "cm"),
+    legend.key.width = unit(0.6, "cm"),
+    legend.key.spacing.y = unit(0.2, "cm"),
   ) 
 
-ggsave("MLS Predictions/Output/Gamma Distribuition.png", width = 7, height = 4)
+ggsave("MLS Predictions/Output/Gamma Distribution.png", width = 7, height = 4)
