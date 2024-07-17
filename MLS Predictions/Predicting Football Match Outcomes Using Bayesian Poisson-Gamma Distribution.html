@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Andres Gonzalez">
+
+<title>Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-html/quarto.js"></script>
+<script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-html/popper.min.js"></script>
+<script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Andres Gonzalez </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Hello everyone!</p>
+<p>Welcome to this tutorial where we’ll explore the fascinating world of Bayesian statistics to predict football match outcomes. We will cover the essential concepts needed to construct a Bayesian model that can estimate the probability of a team winning, drawing, or losing a match.</p>
+<p>In this tutorial, our focus will be on the mathematical foundations that underpin our football forecasting model. While we won’t delve into the code just yet, this session aims to equip you with the fundamental knowledge necessary to understand Bayesian statistics and how they can be utilized to create a model for predicting football match results.</p>
+<p>Let’s get started on this exciting journey!</p>
+<section id="overview-of-the-poisson-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="overview-of-the-poisson-distribution">Overview of the Poisson Distribution</h2>
+<p>The Poisson distribution is commonly used to model count data, such as the number of goals scored by a team in a match. It is characterized by a single parameter <span class="math inline">\(\lambda\)</span>, which represents the average rate (mean) of occurrences (goals) within a fixed interval (a match). The probability mass function (PMF) of the Poisson distribution is:</p>
+<p><span class="math display">\[P(X = x | \lambda) = \frac{\lambda^x e^{-\lambda}}{x!}\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(X\)</span> is the random variable representing the number of goals.</li>
+<li><span class="math inline">\(\lambda\)</span> is the rate parameter (average number of goals).</li>
+<li><span class="math inline">\(x\)</span> is the actual observed count of goals.</li>
+</ul>
+<section id="simple-example" class="level3">
+<h3 class="anchored" data-anchor-id="simple-example">Simple Example</h3>
+<p>Suppose we are modeling the number of goals scored by a particular team in MLS matches. Based on historical data, we estimate that the team scores an average of 1.5 goals per match. Here, <span class="math inline">\(\lambda = 1.5\)</span>.</p>
+<p>Let’s calculate the probability that the team scores exactly 2 goals in a match:</p>
+<p>Substituting <span class="math inline">\(\lambda = 1.5\)</span> and <span class="math inline">\(x = 2\)</span>:</p>
+<p><span class="math display">\[
+P(X = 2 | \lambda = 1.5) = \frac{1.5^2 e^{-1.5}}{2!} = \frac{2.25 \cdot e^{-1.5}}{2} = \frac{2.25 \cdot 0.22313}{2} \approx 0.251
+\]</span></p>
+<p>Therefore, the probability that the team scores exactly 2 goals in a match is approximately 0.251.</p>
+<p>To further illustrate this, let’s look at the observed goals distribution and the expected goals distribution for various MLS teams based on their historical performance:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Output/MLS%20Goals%20and%20Expected%20Goals.png" class="img-fluid figure-img"></p>
+<figcaption>MLS Goals and Expected Goals.</figcaption>
+</figure>
+</div>
+<p>The above plot shows the actual observed goals distribution and the expected goals distribution (modeled using a Poisson distribution) for different MLS teams. This visual comparison helps to validate our model and understand how well the Poisson distribution can predict the number of goals scored by a team.</p>
+</section>
+</section>
+<section id="introduction-to-the-gamma-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-the-gamma-distribution">Introduction to the Gamma Distribution</h2>
+<p>In Bayesian statistics, the Gamma distribution is commonly used as a conjugate prior for the rate parameter (<span class="math inline">\(\lambda\)</span>) of a Poisson distribution. This choice simplifies Bayesian updating because the posterior distribution remains within the same family. The probability density function (PDF) for the Gamma distribution is:</p>
+<p><span class="math display">\[p(\lambda | \alpha, \beta) = \frac{\lambda^{\alpha - 1} e^{-\frac{\lambda}{\beta}}}{\Gamma(\alpha) \beta^\alpha}\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\lambda\)</span>: Rate parameter for the Poisson distribution.</li>
+<li><span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>: Shape and scale parameters of the Gamma distribution.</li>
+<li><span class="math inline">\(\Gamma(\alpha)\)</span>: Gamma function evaluated at <span class="math inline">\(\alpha\)</span>.</li>
+<li>Mean (Expected Value): <span class="math inline">\(\mathbb{E}[\lambda] = \frac{\alpha}{\beta}\)</span></li>
+<li>Variance: <span class="math inline">\(\text{Var}(\lambda) = \frac{\alpha}{\beta^2}\)</span></li>
+</ul>
+<p>These characteristics highlight the role of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> in shaping the distribution’s center (mean) and spread (variance), reflecting our confidence and the level of uncertainty in the prior assessment.</p>
+<section id="hypothetical-football-match-example-part-i" class="level3">
+<h3 class="anchored" data-anchor-id="hypothetical-football-match-example-part-i">Hypothetical Football Match Example Part I</h3>
+<p>Imagine we want to estimate the number of goals that Bayesian City might score in a match against Frequentist Town.</p>
+<p>We have reason to believe that Bayesian City, with their reasonably effective attacking lineup, can exploit the somewhat weak defense of Frequentist Town. Based on this, we assume that Bayesian City’s average goal rate is 1.92 goals per match. This goal rate reflects Bayesian City’s moderate attacking capabilities and Frequentist Town’s defensive vulnerabilities.</p>
+<p>To incorporate this belief into our model, we set our prior parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> such that they satisfy the following equation:</p>
+<p><span class="math display">\[\frac{\alpha}{\beta} = 1.92\]</span></p>
+<ul>
+<li><span class="math inline">\(\alpha\)</span> (shape parameter): Amount of prior knowledge about the team’s scoring ability.</li>
+<li><span class="math inline">\(\beta\)</span> (scale parameter): Represents how this belief spreads, analogous to an artificial sample size, influencing the prior’s certainty.</li>
+</ul>
+<p>Adjusting <span class="math inline">\(\beta\)</span> affects our confidence in <span class="math inline">\(\lambda\)</span>; a higher <span class="math inline">\(\beta\)</span> reduces variance, indicating more confidence, whereas a lower <span class="math inline">\(\beta\)</span> implies greater uncertainty and a wider distribution.</p>
+<p>This explanation clarifies the Gamma distribution’s role in structuring prior beliefs and managing uncertainty in Bayesian inference for football match predictions.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Output/Gamma%20Distribution.png" class="img-fluid figure-img"></p>
+<figcaption>Gamma distributions with varying parameters.</figcaption>
+</figure>
+</div>
+<p>Different combinations of the shape (<span class="math inline">\(\alpha\)</span>) and rate (<span class="math inline">\(\beta\)</span>) parameters of the Gamma distribution, each maintaining an expected mean value of 1.92, demonstrate varying degrees of spread and height. As <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> increase proportionally, the distribution becomes narrower and more peaked, indicating greater confidence and reduced variability in our estimate of the goal rate <span class="math inline">\(\lambda\)</span>.</p>
+<p>Next, we will use these Gamma priors to derive the Poisson-Gamma distribution and estimate the probability of Bayesian City scoring <span class="math inline">\(x\)</span> goals.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Output/Poisson%20Gamma%20Distribution.png" class="img-fluid figure-img"></p>
+<figcaption>Poisson-Gamma distribution.</figcaption>
+</figure>
+</div>
+<p>Different Gamma priors impact the Poisson-Gamma distribution for Bayesian City’s goal predictions. Higher <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> values lead to a more focused distribution, indicating greater confidence in the estimated goal rate.</p>
+<p>Now that we have a clear understanding of the Poisson-Gamma distribution, let’s proceed to the Bayesian posterior Poisson-Gamma distribution to incorporate observed data into our predictions.</p>
+</section>
+</section>
+<section id="bayesian-posterior-poisson-gamma-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="bayesian-posterior-poisson-gamma-distribution">Bayesian Posterior Poisson-Gamma Distribution</h2>
+<p>The Bayesian posterior Poisson-Gamma distribution is particularly beneficial for several reasons. Firstly, it allows us to update our prior beliefs with observed data to obtain a posterior distribution that reflects both prior information and new evidence. This approach is powerful because it provides a systematic way to incorporate uncertainty from various sources, leading to more robust predictions. By accounting for both prior knowledge and observed outcomes, we can better quantify the uncertainty in our estimates and make more informed decisions.</p>
+<p>Mathematically, the posterior distribution is derived as follows:</p>
+<ol type="1">
+<li><strong>Prior Distribution</strong>: We start with a Gamma prior for the Poisson rate parameter <span class="math inline">\(\lambda\)</span>:</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+p(\lambda | \alpha, \beta) &amp;= \frac{\beta^\alpha \lambda^{\alpha - 1} e^{-\beta \lambda}}{\Gamma(\alpha)} \\
+   &amp; \quad \text{for } \lambda &gt; 0
+\end{aligned}
+\]</span></p>
+<ol start="2" type="1">
+<li><strong>Likelihood</strong>: Given observed data, the likelihood function for a Poisson-distributed variable with observed counts <span class="math inline">\(x_1, x_2, \ldots, x_n\)</span> is:</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+   p(x | \lambda) &amp;= \prod_{i=1}^n \frac{e^{-\lambda} \lambda^{x_i}}{x_i!} \\
+   &amp;= \frac{e^{-n\lambda} \lambda^{\sum_{i=1}^n x_i}}{\prod_{i=1}^n x_i!}
+\end{aligned}
+\]</span></p>
+<ol start="3" type="1">
+<li><strong>Posterior Distribution</strong>: Combining the prior and the likelihood using Bayes’ theorem, the posterior distribution for <span class="math inline">\(\lambda\)</span> given the data is:</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+  p(\lambda | x) &amp;\propto p(x | \lambda) p(\lambda | \alpha, \beta) \\
+   &amp;\propto \left( \frac{e^{-n\lambda} \lambda^{\sum_{i=1}^n x_i}}{\prod_{i=1}^n x_i!} \right) \left( \frac{\beta^\alpha \lambda^{\alpha - 1} e^{-\beta \lambda}}{\Gamma(\alpha)} \right)
+\end{aligned}
+\]</span></p>
+<p>Simplifying the expression by combining like terms:</p>
+<p><span class="math display">\[
+\begin{aligned}
+   p(\lambda | x) &amp;\propto e^{-n\lambda} \lambda^{\sum_{i=1}^n x_i} \lambda^{\alpha - 1} e^{-\beta \lambda} \\
+   &amp;\propto \lambda^{\sum_{i=1}^n x_i + \alpha - 1} e^{-\lambda(n + \beta)}
+\end{aligned}
+\]</span></p>
+<p>Since <span class="math inline">\(\prod_{i=1}^n x_i!\)</span>, <span class="math inline">\(\Gamma(\alpha)\)</span>, and <span class="math inline">\(\beta^\alpha\)</span> are constants with respect to <span class="math inline">\(\lambda\)</span>, they can be dropped from the proportionality expression. Therefore, the posterior distribution is:</p>
+<p><span class="math display">\[
+\begin{aligned}
+   p(\lambda | x) &amp;\propto \lambda^{\sum_{i=1}^n x_i + \alpha - 1} e^{-\lambda(n + \beta)} \\
+   &amp; \quad \text{for } \lambda &gt; 0
+\end{aligned}
+\]</span></p>
+<p>The posterior distribution is a Gamma distribution with parameters:</p>
+<ul>
+<li>Shape parameter: <span class="math inline">\(\alpha' = \sum_{i=1}^n x_i + \alpha\)</span></li>
+<li>Rate parameter: <span class="math inline">\(\beta' = n + \beta\)</span></li>
+</ul>
+<section id="expected-value-mean-and-variance" class="level3">
+<h3 class="anchored" data-anchor-id="expected-value-mean-and-variance">Expected Value (Mean) and Variance</h3>
+<p>For a Gamma distribution with shape parameter <span class="math inline">\(\alpha'\)</span> and rate parameter <span class="math inline">\(\beta'\)</span>:</p>
+<ul>
+<li>Mean (Expected Value): <span class="math inline">\(\mathbb{E}[\lambda | x] = \frac{\alpha'}{\beta'} = \frac{\sum_{i=1}^n x_i + \alpha}{n + \beta}\)</span></li>
+<li>Variance: <span class="math inline">\(\text{Var}[\lambda | x] = \frac{\alpha'}{\beta'^2} = \frac{\sum_{i=1}^n x_i + \alpha}{(n + \beta)^2}\)</span></li>
+</ul>
+<p>Cool, right? Now, let’s take this mathematical framework and apply it to real football match data to predict Bayesian City’s goal-scoring rate. By incorporating our prior beliefs with actual match data, we can refine our estimates and reduce uncertainty.</p>
+</section>
+</section>
+<section id="applying-the-bayesian-framework" class="level2">
+<h2 class="anchored" data-anchor-id="applying-the-bayesian-framework">Applying the Bayesian Framework</h2>
+<section id="hypothetical-football-match-example-part-ii" class="level3">
+<h3 class="anchored" data-anchor-id="hypothetical-football-match-example-part-ii">Hypothetical Football Match Example Part II</h3>
+<p>Let’s say we are interested in predicting the number of goals that Bayesian City will score in an upcoming match. Here’s how we can use the Bayesian framework to make our prediction.</p>
+<p>In Part I, we established our prior beliefs using the Gamma distribution with parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> that reflect our prior knowledge of Bayesian City’s average goal rate of 1.92 goals per match. The prior parameters used were:</p>
+<ul>
+<li><span class="math inline">\(\alpha = 9.6\)</span>, <span class="math inline">\(\beta = 5\)</span></li>
+<li><span class="math inline">\(\alpha = 19.2\)</span>, <span class="math inline">\(\beta = 10\)</span></li>
+<li><span class="math inline">\(\alpha = 192\)</span>, <span class="math inline">\(\beta = 100\)</span></li>
+</ul>
+<p>To make a prediction, we need to update this prior distribution with observed data from previous matches. Suppose we have observed the following number of goals scored by Bayesian City in their last eight matches: 2, 1, 3, 0, 2, 2, 1, 1. We will use this data to update our prior distribution and obtain the posterior distribution.</p>
+<p>Using the prior parameters <span class="math inline">\(\alpha = 9.6\)</span> and <span class="math inline">\(\beta = 5\)</span>, and the observed data of 12 goals over 8 matches, the posterior distribution is a Gamma distribution with updated parameters:</p>
+<p><span class="math display">\[
+p(\lambda | x) \sim \text{Gamma}(\alpha', \beta')
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+\alpha' = \alpha + \sum_{i=1}^{n} x_i \quad \text{and} \quad \beta' = \beta + n
+\]</span></p>
+<p>In this case:</p>
+<p><span class="math display">\[
+\alpha' = 9.6 + 12 = 21.6 \quad \text{and} \quad \beta' = 5 + 8 = 13
+\]</span></p>
+<p>This distribution represents our updated belief about the goal rate <span class="math inline">\(\lambda\)</span> after incorporating the observed data.</p>
+<p>To predict the number of goals Bayesian City will score in the next match, we use the posterior predictive distribution. This is a Poisson distribution with the mean equal to the expected value of the posterior Gamma distribution:</p>
+<p><span class="math display">\[
+\mathbb{E}[\lambda | x] = \frac{\alpha'}{\beta'}
+\]</span></p>
+<p>Therefore, the number of goals Bayesian City is expected to score in the next match follows a Poisson distribution with a mean of approximately:</p>
+<p><span class="math display">\[
+\mathbb{E}[\lambda | x] = \frac{21.6}{13} \approx 1.66
+\]</span></p>
+<p>Below is the plot of the posterior Poisson-Gamma distribution for Bayesian City’s goal predictions, illustrating the probabilities of scoring different numbers of goals based on the posterior parameters:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Output/Posterior%20Poisson%20Gamma%20Distribution.png" class="img-fluid figure-img"></p>
+<figcaption>Posterior Poisson-Gamma distribution.</figcaption>
+</figure>
+</div>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>By following these steps, we have used the Bayesian framework to update our prior beliefs with observed data and predict the number of goals Bayesian City will score in their next match. This method provides a systematic way to incorporate both prior knowledge and new evidence in our predictions.</p>
+<p>From our updated posterior distribution, we expect Bayesian City to score approximately 1.66 goals in the next match. This prediction is based on the observed data and the prior information we had about the team’s goal-scoring ability. The Bayesian approach allows us to continuously update our predictions as new data becomes available, making our model more robust and reflective of the team’s current performance.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
