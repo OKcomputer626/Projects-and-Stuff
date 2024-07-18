@@ -10,7 +10,7 @@ toc-title: On this page
 categories: [R, Bayesian, Machine Learning, Football]
 comments:
   giscus:
-    repo: quarto-dev/quarto-web
+    repo: OKcomputer626/Projects-and-Stuff
 title-block-banner: images/cool.jpg
 include-in-header:
   - text: |
