@@ -3,6 +3,23 @@ title: "Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribu
 author: "Andres Gonzalez"
 format: html
 editor: visual
+lightbox: true
+toc: true
+date: last-modified
+toc-title: On this page
+categories: [R, Bayesian, Machine Learning, Football]
+comments:
+  giscus:
+    repo: quarto-dev/quarto-web
+title-block-banner: images/cool.jpg
+include-in-header:
+  - text: |
+      <style>
+      .quarto-title-block .quarto-title-banner {
+        background-position-y: 70%;
+        height: 200px;
+      }
+      </style>
 ---
 
 Hello everyone!
@@ -41,15 +58,20 @@ Therefore, the probability that the team scores exactly 2 goals in a match is ap
 
 To further illustrate this, let's look at the observed goals distribution and the expected goals distribution for various MLS teams based on their historical performance:
 
-![MLS Goals and Expected Goals.](Output/MLS Goals and Expected Goals.png){fig-align="center"}
+![MLS Goals and Expected Goals.](Output/MLS%20Goals%20and%20Expected%20Goals.png){fig-align="center"}
 
-The above plot shows the actual observed goals distribution and the expected goals distribution (modeled using a Poisson distribution) for different MLS teams. This visual comparison helps to validate our model and understand how well the Poisson distribution can predict the number of goals scored by a team.
+The above plot shows the actual observed goals distribution and the expected goals distribution (modeled using a Poisson distribution) for different MLS teams. This visual comparison helps to validate our model and understand how well the Poisson distribution can predict the number of goals scored by a team. Updating $\lambda$ in a Bayesian framework allows us to combine prior knowledge with new data, leading to a more accurate and informed estimate. This dynamic adjustment enhances the predictive power and reliability of our Poisson model.
 
 ## Introduction to the Gamma Distribution
 
 In Bayesian statistics, the Gamma distribution is commonly used as a conjugate prior for the rate parameter ($\lambda$) of a Poisson distribution. This choice simplifies Bayesian updating because the posterior distribution remains within the same family. The probability density function (PDF) for the Gamma distribution is:
 
-$$p(\lambda | \alpha, \beta) = \frac{\lambda^{\alpha - 1} e^{-\frac{\lambda}{\beta}}}{\Gamma(\alpha) \beta^\alpha}$$
+$$
+\begin{aligned}
+p(\lambda | \alpha, \beta) &= \frac{\beta^\alpha \lambda^{\alpha - 1} e^{-\beta \lambda}}{\Gamma(\alpha)} \\
+   & \quad \text{for } \lambda > 0
+\end{aligned}
+$$
 
 where:
 
@@ -63,9 +85,9 @@ These characteristics highlight the role of $\alpha$ and $\beta$ in shaping the 
 
 ### Hypothetical Football Match Example Part I
 
-Imagine we want to estimate the number of goals that Bayesian City might score in a match against Frequentist Town.
+Imagine we want to estimate the number of goals that *Bayesian City* might score in a match against *Frequentist Town*.
 
-We have reason to believe that Bayesian City, with their reasonably effective attacking lineup, can exploit the somewhat weak defense of Frequentist Town. Based on this, we assume that Bayesian City's average goal rate is 1.92 goals per match. This goal rate reflects Bayesian City's moderate attacking capabilities and Frequentist Town's defensive vulnerabilities.
+We have reason to believe that *Bayesian City*, with their reasonably effective attacking lineup, can exploit the somewhat weak defense of *Frequentist Town*. Based on this, we assume that *Bayesian City's* average goal rate is 1.92 goals per match. This goal rate reflects *Bayesian City's* moderate attacking capabilities and *Frequentist Town's* defensive vulnerabilities.
 
 To incorporate this belief into our model, we set our prior parameters $\alpha$ and $\beta$ such that they satisfy the following equation:
 
@@ -86,13 +108,17 @@ Next, we will use these Gamma priors to derive the Poisson-Gamma distribution an
 
 ![Poisson-Gamma distribution.](Output/Poisson%20Gamma%20Distribution.png){fig-align="center"}
 
-Different Gamma priors impact the Poisson-Gamma distribution for Bayesian City's goal predictions. Higher $\alpha$ and $\beta$ values lead to a more focused distribution, indicating greater confidence in the estimated goal rate.
+Different Gamma priors impact the Poisson-Gamma distribution for *Bayesian City's* goal predictions. Higher $\alpha$ and $\beta$ values lead to a more focused distribution, indicating greater confidence in the estimated goal rate.
 
 Now that we have a clear understanding of the Poisson-Gamma distribution, let's proceed to the Bayesian posterior Poisson-Gamma distribution to incorporate observed data into our predictions.
 
 ## Bayesian Posterior Poisson-Gamma Distribution
 
 The Bayesian posterior Poisson-Gamma distribution is particularly beneficial for several reasons. Firstly, it allows us to update our prior beliefs with observed data to obtain a posterior distribution that reflects both prior information and new evidence. This approach is powerful because it provides a systematic way to incorporate uncertainty from various sources, leading to more robust predictions. By accounting for both prior knowledge and observed outcomes, we can better quantify the uncertainty in our estimates and make more informed decisions.
+
+::: callout-important
+Understanding the Bayesian Posterior Poisson-Gamma Distribution can be challenging, but it's a powerful tool. This method allows us to update our understanding of event rates by combining prior knowledge with new data, providing a more accurate basis for making predictions about future events.
+:::
 
 Mathematically, the posterior distribution is derived as follows:
 
@@ -153,21 +179,23 @@ For a Gamma distribution with shape parameter $\alpha'$ and rate parameter $\bet
 -   Mean (Expected Value): $\mathbb{E}[\lambda | x] = \frac{\alpha'}{\beta'} = \frac{\sum_{i=1}^n x_i + \alpha}{n + \beta}$
 -   Variance: $\text{Var}[\lambda | x] = \frac{\alpha'}{\beta'^2} = \frac{\sum_{i=1}^n x_i + \alpha}{(n + \beta)^2}$
 
-Cool, right? Now, let's take this mathematical framework and apply it to real football match data to predict Bayesian City's goal-scoring rate. By incorporating our prior beliefs with actual match data, we can refine our estimates and reduce uncertainty.
+Cool, right?
+
+Now, let's take this mathematical framework and apply it to real football match data to predict Bayesian City's goal-scoring rate. By incorporating our prior beliefs with actual match data, we can refine our estimates and reduce uncertainty.
 
 ## Applying the Bayesian Framework
 
 ### Hypothetical Football Match Example Part II
 
-Let's say we are interested in predicting the number of goals that Bayesian City will score in an upcoming match. Here's how we can use the Bayesian framework to make our prediction.
+Let's say we are interested in predicting the number of goals that *Bayesian City* will score in an upcoming match against *Frequentist Town*. Here's how we can use the Bayesian framework to make our prediction.
 
-In Part I, we established our prior beliefs using the Gamma distribution with parameters $\alpha$ and $\beta$ that reflect our prior knowledge of Bayesian City's average goal rate of 1.92 goals per match. The prior parameters used were:
+In Part I, we established our prior beliefs using the Gamma distribution with parameters $\alpha$ and $\beta$ that reflect our prior knowledge of *Bayesian City's* average goal rate of 1.92 goals per match. The prior parameters used were:
 
 -   $\alpha = 9.6$, $\beta = 5$
 -   $\alpha = 19.2$, $\beta = 10$
 -   $\alpha = 192$, $\beta = 100$
 
-To make a prediction, we need to update this prior distribution with observed data from previous matches. Suppose we have observed the following number of goals scored by Bayesian City in their last eight matches: 2, 1, 3, 0, 2, 2, 1, 1. We will use this data to update our prior distribution and obtain the posterior distribution.
+To make a prediction, we need to update this prior distribution with observed data from previous matches. Suppose we have observed the following number of goals scored by *Bayesian City* in their last eight matches: 2, 1, 3, 0, 2, 2, 1, 1. We will use this data to update our prior distribution and obtain the posterior distribution.
 
 Using the prior parameters $\alpha = 9.6$ and $\beta = 5$, and the observed data of 12 goals over 8 matches, the posterior distribution is a Gamma distribution with updated parameters:
 
@@ -189,24 +217,26 @@ $$
 
 This distribution represents our updated belief about the goal rate $\lambda$ after incorporating the observed data.
 
-To predict the number of goals Bayesian City will score in the next match, we use the posterior predictive distribution. This is a Poisson distribution with the mean equal to the expected value of the posterior Gamma distribution:
+To predict the number of goals *Bayesian City* will score in the next match, we use the posterior predictive distribution. This is a Poisson distribution with the mean equal to the expected value of the posterior Gamma distribution:
 
 $$
 \mathbb{E}[\lambda | x] = \frac{\alpha'}{\beta'}
 $$
 
-Therefore, the number of goals Bayesian City is expected to score in the next match follows a Poisson distribution with a mean of approximately:
+Therefore, the number of goals *Bayesian City* is expected to score in the next match follows a Poisson distribution with a mean of approximately:
 
 $$
 \mathbb{E}[\lambda | x] = \frac{21.6}{13} \approx 1.66
 $$
 
-Below is the plot of the posterior Poisson-Gamma distribution for Bayesian City's goal predictions, illustrating the probabilities of scoring different numbers of goals based on the posterior parameters:
+Below is the plot of the posterior Poisson-Gamma distribution for *Bayesian City's* goal predictions, illustrating the probabilities of scoring different numbers of goals based on the posterior parameters:
 
 ![Posterior Poisson-Gamma distribution.](Output/Posterior%20Poisson%20Gamma%20Distribution.png){fig-align="center"}
 
 ### Conclusion
 
-By following these steps, we have used the Bayesian framework to update our prior beliefs with observed data and predict the number of goals Bayesian City will score in their next match. This method provides a systematic way to incorporate both prior knowledge and new evidence in our predictions.
+By following these steps, we've used the Bayesian framework to update our prior beliefs with observed data and predict the number of goals *Bayesian City* will score in their next match. This method is a cool way to combine both our prior knowledge and new evidence in our predictions.
 
-From our updated posterior distribution, we expect Bayesian City to score approximately 1.66 goals in the next match. This prediction is based on the observed data and the prior information we had about the team's goal-scoring ability. The Bayesian approach allows us to continuously update our predictions as new data becomes available, making our model more robust and reflective of the team's current performance.
+From our updated posterior distribution, we expect *Bayesian City* to score around 1.66 goals in the next match. This prediction is based on the observed data and the prior information we had about the team's goal-scoring ability. The Bayesian approach lets us continuously update our predictions as new data comes in, making our model more robust and in tune with the team's current performance.
+
+This method is really awesome and powerful! By learning it, you're getting a super useful tool for making dynamic, data-driven predictions. Hope you all learned something valuable and enjoyed working with Bayesian statistics!🤘🏽😎

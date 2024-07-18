@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andres Gonzalez">
+<meta name="dcterms.date" content="2024-07-17">
 
 <title>Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution</title>
 <style>
@@ -34,6 +35,22 @@ ul.task-list li input[type="checkbox"] {
 <script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution_files/libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/cool.jpg);
+background-size: cover;
+      }
+</style>
+<style>
+.quarto-title-block .quarto-title-banner {
+  background-position-y: 70%;
+  height: 200px;
+}
+</style>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -67,35 +84,72 @@ window.Quarto = {
 
 </head>
 
-<body class="fullcontent">
+<body>
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">Bayesian</div>
+                <div class="quarto-category">Machine Learning</div>
+                <div class="quarto-category">Football</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
 
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Predicting Football Match Outcomes Using Bayesian Poisson-Gamma Distribution</h1>
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Andres Gonzalez </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 17, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview-of-the-poisson-distribution" id="toc-overview-of-the-poisson-distribution" class="nav-link active" data-scroll-target="#overview-of-the-poisson-distribution">Overview of the Poisson Distribution</a>
+  <ul class="collapse">
+  <li><a href="#simple-example" id="toc-simple-example" class="nav-link" data-scroll-target="#simple-example">Simple Example</a></li>
+  </ul></li>
+  <li><a href="#introduction-to-the-gamma-distribution" id="toc-introduction-to-the-gamma-distribution" class="nav-link" data-scroll-target="#introduction-to-the-gamma-distribution">Introduction to the Gamma Distribution</a>
+  <ul class="collapse">
+  <li><a href="#hypothetical-football-match-example-part-i" id="toc-hypothetical-football-match-example-part-i" class="nav-link" data-scroll-target="#hypothetical-football-match-example-part-i">Hypothetical Football Match Example Part I</a></li>
+  </ul></li>
+  <li><a href="#bayesian-posterior-poisson-gamma-distribution" id="toc-bayesian-posterior-poisson-gamma-distribution" class="nav-link" data-scroll-target="#bayesian-posterior-poisson-gamma-distribution">Bayesian Posterior Poisson-Gamma Distribution</a>
+  <ul class="collapse">
+  <li><a href="#expected-value-mean-and-variance" id="toc-expected-value-mean-and-variance" class="nav-link" data-scroll-target="#expected-value-mean-and-variance">Expected Value (Mean) and Variance</a></li>
+  </ul></li>
+  <li><a href="#applying-the-bayesian-framework" id="toc-applying-the-bayesian-framework" class="nav-link" data-scroll-target="#applying-the-bayesian-framework">Applying the Bayesian Framework</a>
+  <ul class="collapse">
+  <li><a href="#hypothetical-football-match-example-part-ii" id="toc-hypothetical-football-match-example-part-ii" class="nav-link" data-scroll-target="#hypothetical-football-match-example-part-ii">Hypothetical Football Match Example Part II</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
 </div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Andres Gonzalez </p>
-          </div>
-  </div>
-    
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <p>Hello everyone!</p>
@@ -124,17 +178,26 @@ P(X = 2 | \lambda = 1.5) = \frac{1.5^2 e^{-1.5}}{2!} = \frac{2.25 \cdot e^{-1.5}
 <p>To further illustrate this, let’s look at the observed goals distribution and the expected goals distribution for various MLS teams based on their historical performance:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Output/MLS%20Goals%20and%20Expected%20Goals.png" class="img-fluid figure-img"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="Output/MLS%20Goals%20and%20Expected%20Goals.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-glightbox="description: .lightbox-desc-1" title="MLS Goals and Expected Goals."><img src="Output/MLS%20Goals%20and%20Expected%20Goals.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="MLS Goals and Expected Goals."></a></p>
+</figure>
+</div>
 <figcaption>MLS Goals and Expected Goals.</figcaption>
 </figure>
 </div>
-<p>The above plot shows the actual observed goals distribution and the expected goals distribution (modeled using a Poisson distribution) for different MLS teams. This visual comparison helps to validate our model and understand how well the Poisson distribution can predict the number of goals scored by a team.</p>
+<p>The above plot shows the actual observed goals distribution and the expected goals distribution (modeled using a Poisson distribution) for different MLS teams. This visual comparison helps to validate our model and understand how well the Poisson distribution can predict the number of goals scored by a team. Updating <span class="math inline">\(\lambda\)</span> in a Bayesian framework allows us to combine prior knowledge with new data, leading to a more accurate and informed estimate. This dynamic adjustment enhances the predictive power and reliability of our Poisson model.</p>
 </section>
 </section>
 <section id="introduction-to-the-gamma-distribution" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-the-gamma-distribution">Introduction to the Gamma Distribution</h2>
 <p>In Bayesian statistics, the Gamma distribution is commonly used as a conjugate prior for the rate parameter (<span class="math inline">\(\lambda\)</span>) of a Poisson distribution. This choice simplifies Bayesian updating because the posterior distribution remains within the same family. The probability density function (PDF) for the Gamma distribution is:</p>
-<p><span class="math display">\[p(\lambda | \alpha, \beta) = \frac{\lambda^{\alpha - 1} e^{-\frac{\lambda}{\beta}}}{\Gamma(\alpha) \beta^\alpha}\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+p(\lambda | \alpha, \beta) &amp;= \frac{\beta^\alpha \lambda^{\alpha - 1} e^{-\beta \lambda}}{\Gamma(\alpha)} \\
+   &amp; \quad \text{for } \lambda &gt; 0
+\end{aligned}
+\]</span></p>
 <p>where:</p>
 <ul>
 <li><span class="math inline">\(\lambda\)</span>: Rate parameter for the Poisson distribution.</li>
@@ -146,8 +209,8 @@ P(X = 2 | \lambda = 1.5) = \frac{1.5^2 e^{-1.5}}{2!} = \frac{2.25 \cdot e^{-1.5}
 <p>These characteristics highlight the role of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> in shaping the distribution’s center (mean) and spread (variance), reflecting our confidence and the level of uncertainty in the prior assessment.</p>
 <section id="hypothetical-football-match-example-part-i" class="level3">
 <h3 class="anchored" data-anchor-id="hypothetical-football-match-example-part-i">Hypothetical Football Match Example Part I</h3>
-<p>Imagine we want to estimate the number of goals that Bayesian City might score in a match against Frequentist Town.</p>
-<p>We have reason to believe that Bayesian City, with their reasonably effective attacking lineup, can exploit the somewhat weak defense of Frequentist Town. Based on this, we assume that Bayesian City’s average goal rate is 1.92 goals per match. This goal rate reflects Bayesian City’s moderate attacking capabilities and Frequentist Town’s defensive vulnerabilities.</p>
+<p>Imagine we want to estimate the number of goals that <em>Bayesian City</em> might score in a match against <em>Frequentist Town</em>.</p>
+<p>We have reason to believe that <em>Bayesian City</em>, with their reasonably effective attacking lineup, can exploit the somewhat weak defense of <em>Frequentist Town</em>. Based on this, we assume that <em>Bayesian City’s</em> average goal rate is 1.92 goals per match. This goal rate reflects <em>Bayesian City’s</em> moderate attacking capabilities and <em>Frequentist Town’s</em> defensive vulnerabilities.</p>
 <p>To incorporate this belief into our model, we set our prior parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> such that they satisfy the following equation:</p>
 <p><span class="math display">\[\frac{\alpha}{\beta} = 1.92\]</span></p>
 <ul>
@@ -158,7 +221,11 @@ P(X = 2 | \lambda = 1.5) = \frac{1.5^2 e^{-1.5}}{2!} = \frac{2.25 \cdot e^{-1.5}
 <p>This explanation clarifies the Gamma distribution’s role in structuring prior beliefs and managing uncertainty in Bayesian inference for football match predictions.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Output/Gamma%20Distribution.png" class="img-fluid figure-img"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="Output/Gamma%20Distribution.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" data-glightbox="description: .lightbox-desc-2" title="Gamma distributions with varying parameters."><img src="Output/Gamma%20Distribution.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Gamma distributions with varying parameters."></a></p>
+</figure>
+</div>
 <figcaption>Gamma distributions with varying parameters.</figcaption>
 </figure>
 </div>
@@ -166,17 +233,34 @@ P(X = 2 | \lambda = 1.5) = \frac{1.5^2 e^{-1.5}}{2!} = \frac{2.25 \cdot e^{-1.5}
 <p>Next, we will use these Gamma priors to derive the Poisson-Gamma distribution and estimate the probability of Bayesian City scoring <span class="math inline">\(x\)</span> goals.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Output/Poisson%20Gamma%20Distribution.png" class="img-fluid figure-img"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="Output/Poisson%20Gamma%20Distribution.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" data-glightbox="description: .lightbox-desc-3" title="Poisson-Gamma distribution."><img src="Output/Poisson%20Gamma%20Distribution.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Poisson-Gamma distribution."></a></p>
+</figure>
+</div>
 <figcaption>Poisson-Gamma distribution.</figcaption>
 </figure>
 </div>
-<p>Different Gamma priors impact the Poisson-Gamma distribution for Bayesian City’s goal predictions. Higher <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> values lead to a more focused distribution, indicating greater confidence in the estimated goal rate.</p>
+<p>Different Gamma priors impact the Poisson-Gamma distribution for <em>Bayesian City’s</em> goal predictions. Higher <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> values lead to a more focused distribution, indicating greater confidence in the estimated goal rate.</p>
 <p>Now that we have a clear understanding of the Poisson-Gamma distribution, let’s proceed to the Bayesian posterior Poisson-Gamma distribution to incorporate observed data into our predictions.</p>
 </section>
 </section>
 <section id="bayesian-posterior-poisson-gamma-distribution" class="level2">
 <h2 class="anchored" data-anchor-id="bayesian-posterior-poisson-gamma-distribution">Bayesian Posterior Poisson-Gamma Distribution</h2>
 <p>The Bayesian posterior Poisson-Gamma distribution is particularly beneficial for several reasons. Firstly, it allows us to update our prior beliefs with observed data to obtain a posterior distribution that reflects both prior information and new evidence. This approach is powerful because it provides a systematic way to incorporate uncertainty from various sources, leading to more robust predictions. By accounting for both prior knowledge and observed outcomes, we can better quantify the uncertainty in our estimates and make more informed decisions.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Understanding the Bayesian Posterior Poisson-Gamma Distribution can be challenging, but it’s a powerful tool. This method allows us to update our understanding of event rates by combining prior knowledge with new data, providing a more accurate basis for making predictions about future events.</p>
+</div>
+</div>
 <p>Mathematically, the posterior distribution is derived as follows:</p>
 <ol type="1">
 <li><strong>Prior Distribution</strong>: We start with a Gamma prior for the Poisson rate parameter <span class="math inline">\(\lambda\)</span>:</li>
@@ -231,21 +315,22 @@ p(\lambda | \alpha, \beta) &amp;= \frac{\beta^\alpha \lambda^{\alpha - 1} e^{-\b
 <li>Mean (Expected Value): <span class="math inline">\(\mathbb{E}[\lambda | x] = \frac{\alpha'}{\beta'} = \frac{\sum_{i=1}^n x_i + \alpha}{n + \beta}\)</span></li>
 <li>Variance: <span class="math inline">\(\text{Var}[\lambda | x] = \frac{\alpha'}{\beta'^2} = \frac{\sum_{i=1}^n x_i + \alpha}{(n + \beta)^2}\)</span></li>
 </ul>
-<p>Cool, right? Now, let’s take this mathematical framework and apply it to real football match data to predict Bayesian City’s goal-scoring rate. By incorporating our prior beliefs with actual match data, we can refine our estimates and reduce uncertainty.</p>
+<p>Cool, right?</p>
+<p>Now, let’s take this mathematical framework and apply it to real football match data to predict Bayesian City’s goal-scoring rate. By incorporating our prior beliefs with actual match data, we can refine our estimates and reduce uncertainty.</p>
 </section>
 </section>
 <section id="applying-the-bayesian-framework" class="level2">
 <h2 class="anchored" data-anchor-id="applying-the-bayesian-framework">Applying the Bayesian Framework</h2>
 <section id="hypothetical-football-match-example-part-ii" class="level3">
 <h3 class="anchored" data-anchor-id="hypothetical-football-match-example-part-ii">Hypothetical Football Match Example Part II</h3>
-<p>Let’s say we are interested in predicting the number of goals that Bayesian City will score in an upcoming match. Here’s how we can use the Bayesian framework to make our prediction.</p>
-<p>In Part I, we established our prior beliefs using the Gamma distribution with parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> that reflect our prior knowledge of Bayesian City’s average goal rate of 1.92 goals per match. The prior parameters used were:</p>
+<p>Let’s say we are interested in predicting the number of goals that <em>Bayesian City</em> will score in an upcoming match against <em>Frequentist Town</em>. Here’s how we can use the Bayesian framework to make our prediction.</p>
+<p>In Part I, we established our prior beliefs using the Gamma distribution with parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> that reflect our prior knowledge of <em>Bayesian City’s</em> average goal rate of 1.92 goals per match. The prior parameters used were:</p>
 <ul>
 <li><span class="math inline">\(\alpha = 9.6\)</span>, <span class="math inline">\(\beta = 5\)</span></li>
 <li><span class="math inline">\(\alpha = 19.2\)</span>, <span class="math inline">\(\beta = 10\)</span></li>
 <li><span class="math inline">\(\alpha = 192\)</span>, <span class="math inline">\(\beta = 100\)</span></li>
 </ul>
-<p>To make a prediction, we need to update this prior distribution with observed data from previous matches. Suppose we have observed the following number of goals scored by Bayesian City in their last eight matches: 2, 1, 3, 0, 2, 2, 1, 1. We will use this data to update our prior distribution and obtain the posterior distribution.</p>
+<p>To make a prediction, we need to update this prior distribution with observed data from previous matches. Suppose we have observed the following number of goals scored by <em>Bayesian City</em> in their last eight matches: 2, 1, 3, 0, 2, 2, 1, 1. We will use this data to update our prior distribution and obtain the posterior distribution.</p>
 <p>Using the prior parameters <span class="math inline">\(\alpha = 9.6\)</span> and <span class="math inline">\(\beta = 5\)</span>, and the observed data of 12 goals over 8 matches, the posterior distribution is a Gamma distribution with updated parameters:</p>
 <p><span class="math display">\[
 p(\lambda | x) \sim \text{Gamma}(\alpha', \beta')
@@ -259,26 +344,37 @@ p(\lambda | x) \sim \text{Gamma}(\alpha', \beta')
 \alpha' = 9.6 + 12 = 21.6 \quad \text{and} \quad \beta' = 5 + 8 = 13
 \]</span></p>
 <p>This distribution represents our updated belief about the goal rate <span class="math inline">\(\lambda\)</span> after incorporating the observed data.</p>
-<p>To predict the number of goals Bayesian City will score in the next match, we use the posterior predictive distribution. This is a Poisson distribution with the mean equal to the expected value of the posterior Gamma distribution:</p>
+<p>To predict the number of goals <em>Bayesian City</em> will score in the next match, we use the posterior predictive distribution. This is a Poisson distribution with the mean equal to the expected value of the posterior Gamma distribution:</p>
 <p><span class="math display">\[
 \mathbb{E}[\lambda | x] = \frac{\alpha'}{\beta'}
 \]</span></p>
-<p>Therefore, the number of goals Bayesian City is expected to score in the next match follows a Poisson distribution with a mean of approximately:</p>
+<p>Therefore, the number of goals <em>Bayesian City</em> is expected to score in the next match follows a Poisson distribution with a mean of approximately:</p>
 <p><span class="math display">\[
 \mathbb{E}[\lambda | x] = \frac{21.6}{13} \approx 1.66
 \]</span></p>
-<p>Below is the plot of the posterior Poisson-Gamma distribution for Bayesian City’s goal predictions, illustrating the probabilities of scoring different numbers of goals based on the posterior parameters:</p>
+<p>Below is the plot of the posterior Poisson-Gamma distribution for <em>Bayesian City’s</em> goal predictions, illustrating the probabilities of scoring different numbers of goals based on the posterior parameters:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="Output/Posterior%20Poisson%20Gamma%20Distribution.png" class="img-fluid figure-img"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="Output/Posterior%20Poisson%20Gamma%20Distribution.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" data-glightbox="description: .lightbox-desc-4" title="Posterior Poisson-Gamma distribution."><img src="Output/Posterior%20Poisson%20Gamma%20Distribution.png" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="Posterior Poisson-Gamma distribution."></a></p>
+</figure>
+</div>
 <figcaption>Posterior Poisson-Gamma distribution.</figcaption>
 </figure>
 </div>
 </section>
 <section id="conclusion" class="level3">
 <h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
-<p>By following these steps, we have used the Bayesian framework to update our prior beliefs with observed data and predict the number of goals Bayesian City will score in their next match. This method provides a systematic way to incorporate both prior knowledge and new evidence in our predictions.</p>
-<p>From our updated posterior distribution, we expect Bayesian City to score approximately 1.66 goals in the next match. This prediction is based on the observed data and the prior information we had about the team’s goal-scoring ability. The Bayesian approach allows us to continuously update our predictions as new data becomes available, making our model more robust and reflective of the team’s current performance.</p>
+<p>By following these steps, we’ve used the Bayesian framework to update our prior beliefs with observed data and predict the number of goals <em>Bayesian City</em> will score in their next match. This method is a cool way to combine both our prior knowledge and new evidence in our predictions.</p>
+<p>From our updated posterior distribution, we expect <em>Bayesian City</em> to score around 1.66 goals in the next match. This prediction is based on the observed data and the prior information we had about the team’s goal-scoring ability. The Bayesian approach lets us continuously update our predictions as new data comes in, making our model more robust and in tune with the team’s current performance.</p>
+<p>This method is really awesome and powerful! By learning it, you’re getting a super useful tool for making dynamic, data-driven predictions. Hope you all learned something valuable and enjoyed working with Bayesian statistics!🤘🏽😎</p>
+<div class="hidden" aria-hidden="true">
+<span class="glightbox-desc lightbox-desc-1">MLS Goals and Expected Goals.</span>
+<span class="glightbox-desc lightbox-desc-2">Gamma distributions with varying parameters.</span>
+<span class="glightbox-desc lightbox-desc-3">Poisson-Gamma distribution.</span>
+<span class="glightbox-desc lightbox-desc-4">Posterior Poisson-Gamma distribution.</span>
+</div>
 </section>
 </section>
 
@@ -693,7 +789,36 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<script src="https://giscus.app/client.js" data-repo="quarto-dev/quarto-web" data-repo-id="MDEwOlJlcG9zaXRvcnkzNDc2MzMzNTg=" data-category="General" data-category-id="DIC_kwDOFLh2zs4CBQCO" data-mapping="title" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","descPosition":"bottom","selector":".lightbox","loop":false,"closeEffect":"zoom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
 
 
 

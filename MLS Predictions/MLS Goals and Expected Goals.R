@@ -5,9 +5,12 @@ library(ggh4x)
 library(patchwork)
 library(grid)
 library(png)
+library(sysfonts)
+library(ggtext)
 
 font_add_google("Montserrat", "Montserrat")
 font_add_google("Roboto", "Roboto")
+font_add("Font Awesome 6 Brands", "fonts/otfs/Font Awesome 6 Brands-Regular-400.otf")
 showtext_auto()
 showtext_opts(dpi = 300)
 
@@ -113,21 +116,21 @@ create_plot <- function(data, avg_goals, logo_path, show_title_y = FALSE, show_t
     theme_minimal() +
     theme(
       text = element_text(family = "Montserrat"),
-      plot.title = element_text(size = 6, face = "bold", hjust = 0), # Align title to top right
-      axis.title.x = if(show_title_x) element_text(size = 5.5, color = "black") else element_blank(),
-      axis.title.y = if(show_title_y) element_text(size = 5.5, color = "black") else element_blank(),
-      axis.text.x = if(show_text_x) element_text(size = 5.5, color = "black") else element_blank(),
-      axis.text.y = if(show_text_y) element_text(size = 5.5, color = "black") else element_blank(),
+      plot.title = element_text(size = 8, face = "bold", hjust = 0), # Align title to top right
+      axis.title.x = if(show_title_x) element_text(size = 7, color = "black") else element_blank(),
+      axis.title.y = if(show_title_y) element_text(size = 7, color = "black") else element_blank(),
+      axis.text.x = if(show_text_x) element_text(size = 7, color = "black") else element_blank(),
+      axis.text.y = if(show_text_y) element_text(size = 7, color = "black") else element_blank(),
       panel.grid = element_line(linetype = "dashed", linewidth = 0.15, color = "gray80"),
       panel.grid.minor = element_blank(),
       axis.line = element_line(linewidth = 0.3),
       axis.ticks = element_line(linewidth = 0.3),
       axis.ticks.length = unit(0.07, "cm"),
       legend.position = c(0.75, 0.9),
-      legend.text = element_text(size = 4, margin = margin(l = 0.08, unit = "cm"), family = "Roboto"),
+      legend.text = element_text(size = 6.5, margin = margin(l = 0.08, unit = "cm"), family = "Roboto"),
       legend.title = element_blank(),
       legend.key.height = unit(0.2, "cm"),
-      legend.key.width = unit(0.4, "cm"),
+      legend.key.width = unit(0.45, "cm"),
       legend.key.spacing.y = unit(0.08, "cm")
     )
   
@@ -183,4 +186,17 @@ plots <- lapply(seq_along(df_split), function(i) {
 
 combined_plot <- wrap_plots(plots)
 print(combined_plot)
-ggsave("MLS Predictions/Output/MLS Goals and Expected Goals.png", combined_plot, bg = "white", width = 8, height = 8)
+
+
+#from social caption file
+source("MLS Predictions/social_caption.R")
+caption = paste0(social_caption(font_family = "Montserrat", linkedin = "Andres Gonzalez", icon_color= "#0F2143"))
+
+MLS_plot <- combined_plot +
+  plot_annotation(title = "Comparing Observed and Poisson-Modeled Goals for MLS Teams 2024",
+                  caption = caption,
+                  theme = theme(text = element_text(family = "Montserrat"),
+                                plot.title = element_text(face = "bold"),
+                                plot.caption = element_textbox_simple()))
+
+ggsave("MLS Predictions/Output/MLS Goals and Expected Goals.png", MLS_plot, bg = "white", width = 10, height = 10)

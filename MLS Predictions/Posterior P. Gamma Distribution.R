@@ -23,7 +23,7 @@ negative_binomial <- lapply(1:length(posterior_params$alpha), function(i) {
   tibble(
     x = goal_range,
     density = dnbinom(goal_range, size = posterior_params$alpha[i], mu = posterior_params$alpha[i] / posterior_params$beta[i]),
-    Parameters = paste0("Posterior P. Gamma, α = ", prior_params$alpha[i], ", β = ", prior_params$beta[i])
+    Parameters = paste0("Posterior P. Gamma, α' = ", posterior_params$alpha[i], ", β' = ", posterior_params$beta[i])
   )
 })
 
@@ -36,11 +36,11 @@ negative_binomial %>%
   geom_line(linewidth = 0.6) +
   geom_point(size = 2) +
   scale_color_manual(values = c("#3D405B", "#81B29A", "#E07A5F"),
-                     breaks = c("Posterior P. Gamma, α = 9.6, β = 5", "Posterior P. Gamma, α = 19.2, β = 10", "Posterior P. Gamma, α = 192, β = 100")) +
+                     breaks = c("Posterior P. Gamma, α' = 21.6, β' = 13", "Posterior P. Gamma, α' = 31.2, β' = 18", "Posterior P. Gamma, α' = 204, β' = 108")) +
   scale_shape_manual(values = c(16,16,25),
-                     breaks = c("Posterior P. Gamma, α = 9.6, β = 5", "Posterior P. Gamma, α = 19.2, β = 10", "Posterior P. Gamma, α = 192, β = 100")) +
+                     breaks = c("Posterior P. Gamma, α' = 21.6, β' = 13", "Posterior P. Gamma, α' = 31.2, β' = 18", "Posterior P. Gamma, α' = 204, β' = 108")) +
   scale_fill_manual(values = c("#3D405B","#81B29A","#E07A5F"),
-                    breaks = c("Posterior P. Gamma, α = 9.6, β = 5", "Posterior P. Gamma, α = 19.2, β = 10", "Posterior P. Gamma, α = 192, β = 100")) +
+                    breaks = c("Posterior P. Gamma, α' = 21.6, β' = 13", "Posterior P. Gamma, α' = 31.2, β' = 18", "Posterior P. Gamma, α' = 204, β' = 108")) +
   scale_y_continuous(labels = scales::percent,
                      breaks = seq(0, .35, by = 0.05),
                      limits = c(0, .35),
