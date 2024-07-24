@@ -73,11 +73,10 @@ caption <- paste0(social_caption(font_family = "Lato", linkedin = "Andres Gonzal
 
 df %>%
   group_by(Competition_Name, Goals) %>%
-  count() %>%
-  group_by(Competition_Name) %>%
-  mutate(frequency = n / sum(n)) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
   ungroup() %>%
-  ggplot(aes(x = Goals, y = frequency, fill = Competition_Name)) +
+  ggplot(aes(x = Goals, y = freq, fill = Competition_Name)) +
   geom_bar(stat="identity", position=position_dodge()) +
   scale_fill_manual(values = c("#2B8B41", "#001F5B")) +
   scale_y_continuous(expand = c(0,0),
