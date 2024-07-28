@@ -5,8 +5,6 @@ library(sysfonts)
 
 font_add("Font Awesome 6 Brands", "fonts/otfs/Font Awesome 6 Brands-Regular-400.otf")
 
-
-
 df <- read_csv("Bayesian Leagues Cup/data/leagues cup predictions.csv")
 
 
@@ -31,13 +29,13 @@ for (i in length(df$Team)) {
 
 table1 <- results %>%
   filter(Region %in% c("East 1", "East 2", "East 3", "East 4", "East 5", "East 6", "East 7")) %>%
-  arrange(Region, desc(Rank_1)) %>%
+  arrange(Region, desc(xP)) %>%
   gt(groupname_col = "Region") %>%
   tab_header(
     title = (
       "2024 LEAGUES CUP PROBABILITES"
     ),
-    subtitle = "Projections as of July 26, 2024 - Data provided by fbref via Opta"
+    subtitle = "Projections as of July 27, 2024 - Data provided by fbref via Opta"
   ) %>%
   cols_label(
     Team = "TEAM",
@@ -101,8 +99,8 @@ table1 <- results %>%
   ) %>%
   gt_color_rows(columns = c(prob_advance, Rank_1, Rank_2), palette = "RColorBrewer::Blues",
                 domain = c(0,1)) %>%
-  gt_color_rows(columns = xP, palette = "RColorBrewer::Blues",
-                domain = c(1.21, 4.05)
+  gt_color_rows(columns = xP, palette = "RColorBrewer::Reds",
+                domain = c(0.86, 5.24)
                 ) %>%
   tab_options(
     heading.title.font.size = px(25),
@@ -126,7 +124,7 @@ table1 <- results %>%
       "@AndresAnalytics ",
       "<span style='color: white;'>..</span>",
       "<span style='font-family: \"Font Awesome 6 Brands\";'>&#xf09b;</span> ",
-      "@AndresAnalytics"
+      "OKcomputer626"
     )
   )
   ) %>%
@@ -138,7 +136,7 @@ table1 <- results %>%
   ) %>%
   tab_footnote(
     footnote = "Probabilities estimated using 4000 runs of Markov chain Monte Carlo for accuracy.",
-    locations = cells_title(groups = "title")
+    locations = cells_title(groups = "subtitle")
   ) %>%
   tab_style(
     style = cell_text(
@@ -151,7 +149,7 @@ table1 <- results %>%
 
 table2 <- results %>%
   filter(Region %in% c("West 1", "West 2", "West 3", "West 4", "West 5", "West 6", "West 7", "West 8")) %>%
-  arrange(Region, desc(Rank_1)) %>%
+  arrange(Region, desc(xP)) %>%
   gt(groupname_col = "Region") %>%
   tab_header(
     title = add_text_img(
@@ -215,8 +213,8 @@ table2 <- results %>%
   ) %>%
   gt_color_rows(columns = c(prob_advance, Rank_1, Rank_2), palette = "RColorBrewer::Blues",
                 domain = c(0,1)) %>%
-  gt_color_rows(columns = xP, palette = "RColorBrewer::Blues",
-                domain = c(1.21, 4.05)
+  gt_color_rows(columns = xP, palette = "RColorBrewer::Reds",
+                domain = c(0.86, 5.24)
   ) %>%
   tab_options(
     heading.align = "right",
