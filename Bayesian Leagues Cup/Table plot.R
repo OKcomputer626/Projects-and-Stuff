@@ -100,7 +100,7 @@ table1 <- results %>%
   gt_color_rows(columns = c(prob_advance, Rank_1, Rank_2), palette = "RColorBrewer::Blues",
                 domain = c(0,1)) %>%
   gt_color_rows(columns = xP, palette = "RColorBrewer::Reds",
-                domain = c(0.86, 5.24)
+                domain = c(0.87, 5.22)
                 ) %>%
   tab_options(
     heading.title.font.size = px(25),
@@ -214,7 +214,7 @@ table2 <- results %>%
   gt_color_rows(columns = c(prob_advance, Rank_1, Rank_2), palette = "RColorBrewer::Blues",
                 domain = c(0,1)) %>%
   gt_color_rows(columns = xP, palette = "RColorBrewer::Reds",
-                domain = c(0.86, 5.24)
+                domain = c(0.87, 5.22)
   ) %>%
   tab_options(
     heading.align = "right",
