@@ -118,11 +118,11 @@ ligamx_debutants_unique <- ligamx_debutants_unique %>%
 
 
 ligamx_debutants_unique <- ligamx_debutants_unique %>%
-  mutate(logo = paste0("Bayesian Leagues Cup/images/logos/", debut_for, ".png"))
+  mutate(logo = paste0("Liga MX/images/logos/", debut_for, ".png"))
 
 
 
-source("Bayesian Leagues Cup/social_caption.R")
+source("Liga MX/social_caption.R")
 caption <- paste0(social_caption(font_family = "Oswald", linkedin = "Andres Gonzalez", icon_color= "#007FFF", font_color = "grey50"))
 
 ggplot(ligamx_debutants_unique, aes(x = age_debut_corrected, y = fct_reorder(player_name, -age_debut_corrected), label = age_debut)) +
@@ -148,15 +148,15 @@ ggplot(ligamx_debutants_unique, aes(x = age_debut_corrected, y = fct_reorder(pla
     panel.grid.major = element_line(linetype = "dashed", linewidth = 0.1, color = "grey80")
   )
 
-ggsave("Bayesian Leagues Cup/images/Liga MX Debutants Apertura 2024.png", bg = "white", height = 7, width = 8)
+ggsave("Liga MX/images/Liga MX Debutants Apertura 2024.png", bg = "white", height = 7, width = 8)
 
 plot_logo <- add_logo(
-  plot_path = here::here("Bayesian Leagues Cup/images/Liga MX Debutants Apertura 2024.png"),
-  logo_path = here::here("Bayesian Leagues Cup/images/logos/liga mx.png"),
+  plot_path = here::here("Liga MX/images/Liga MX Debutants Apertura 2024.png"),
+  logo_path = here::here("Liga MX/images/logos/liga mx.png"),
   logo_position = "top right",
   logo_scale = 12)
 
 magick::image_write(image = plot_logo, 
-                    here::here("Bayesian Leagues Cup/images/Liga MX Debutants Apertura 2024.png"))
+                    here::here("Liga MX/images/Liga MX Debutants Apertura 2024.png"))
 
 
