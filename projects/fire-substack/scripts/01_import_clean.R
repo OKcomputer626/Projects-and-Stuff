@@ -24,3 +24,20 @@ glimpse(df_clean)
 
 # Save the cleaned dataset so future scripts can use it
 write_csv(df_clean, clean_path)
+
+
+# Paths -------------------------------------------------------------------
+raw_path   <- "projects/fire-substack/data/bh_parcels_dins_2025.csv"
+clean_path <- "projects/fire-substack/output/data/bh_parcels_dins_2025_clean.csv"
+
+# Read + clean ------------------------------------------------------------
+bh_parcels_clean <- read_csv(raw_path, show_col_types = FALSE) %>%
+  clean_names() %>%                 # lowercase + underscores
+  remove_empty(which = "cols") %>%  # drop fully empty columns
+  remove_empty(which = "rows")      # drop fully empty rows
+
+# Quick check -------------------------------------------------------------
+glimpse(bh_parcels_clean)
+
+# Save --------------------------------------------------------------------
+write_csv(bh_parcels_clean, clean_path)
