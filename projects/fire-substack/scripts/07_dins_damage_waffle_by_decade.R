@@ -34,7 +34,8 @@ clean_path <- "projects/fire-substack/output/data/bh_parcels_dins_2025_clean.csv
 df <- read_csv(clean_path)
 
 df_residential <- df %>%
-  filter(use_type == "Residential") %>%
+  filter(use_type == "Residential",
+         fire_name == "Palisades") %>%
   drop_na(year_built1) %>%
   filter(year_built1 >= 1885) %>%
   mutate(
@@ -89,14 +90,15 @@ st <- paste0(
   "<span style='color:#118ab2;'>**Destroyed (>50%)**</span> accounted for **",
   round(max_damage_freq, 1),
   "%** of all damage assessments. ",
-  "A significant portion of the homes inspected (**",
+  "A significant portion of the inspected homes (**",
   round(before_1960, 1),
-  "%**) were built before 1960, with the majority of these constructed during the 1950s. ",
-  "These older homes—now roughly 67 to well over 100 years old—were built across decades and are an integral part of the area's character. ",
+  "%**) were built before 1960, with a large share constructed during the 1950s. ",
+  "These older homes—now generally more than 65 years old, and in some cases over a century old—span multiple construction eras and remain an integral part of the area’s character. ",
   "Other damage levels included <span style='color:#ef476f;'>**No Damage**</span>, ",
   "<span style='color:#f78c6b;'>**Affected (1-9%)**</span>, ",
-  "<span style='color:#ffd166;'>**Minor (10-25%)**</span>, and ",
-  "<span style='color:#06d6a0;'>**Major (26-50%)**</span>. ",
+  "<span style='color:#ffd166;'>**Minor (10-25%)**</span>, ",
+  "<span style='color:#06d6a0;'>**Major (26-50%)**</span>, and ",
+  "<span style='color:#073b4c;'>**No Data/Vacant**</span>. ",
   "This tragedy highlights the critical need to retrofit older homes with modern fire-resistant materials to mitigate future disasters."
 )
 

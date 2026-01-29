@@ -125,7 +125,9 @@ p <- plot2_monthly_df %>%
      linewidth = 0.5
    ),
    panel.grid.major.x = element_blank(),
-   panel.grid.minor = element_blank()
+   panel.grid.minor = element_blank(),
+   plot.background = element_rect(fill = "#F0EFEB", color = "#F0EFEB"),
+   panel.background = element_rect(fill = "#F0EFEB", color = "#F0EFEB")
   )
 
 ggsave(
