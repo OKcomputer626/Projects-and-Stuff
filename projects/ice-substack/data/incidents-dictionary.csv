@@ -1,0 +1,17 @@
+Name,Label,Type,Description
+date,"Date of incident",string,
+summary,"Incident description",string,"News summary written by The Trace staff."
+city,"Incident city",string,
+location,Coordinates,string,"Latitude, longitude"
+incident_type,"Descriptive labels",string,"Less-lethal munitions: Immigration agent fired less lethal rounds (rubber bullets, etc.) at subject(s)
+Shooting by immigration agent: Immigration agent discharged a firearm
+Brandishing by immigration agent: Immigration agent pointed a firearm at subject(s)"
+sources,"Source URLs",string,"News articles and other source material for the incident entry."
+civilians_killed,"Death count",integer,"Number of civilians killed in incident."
+civilians_wounded,"Injury count",integer,"Number of civilians injured but not killed in each incident."
+category,"Category tags",string,"fatal: Subcategory of incident_type 'Shooting by immigration agent' with reported death(s)
+injured: Subcategory of incident_type 'Shooting by immigration agent' with reported injuries
+shooting: Subcategory of incident_type 'Shooting by immigration agent' with no reported deaths or injuries
+lesslethal: Equivalent to incident_type 'Less-lethal munitions'
+brandishing: Equivalent to incident_type 'Brandishing by immigration agent'"
+off_duty,"Agent duty status",boolean,"Whether or not the immigration agent involved in the incident was off duty."
